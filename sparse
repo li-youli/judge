@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Fungsi komparator untuk qsort pada array 2D
+int compare(const void *a, const void *b) {
+    // Casting pointer ke bentuk array integer
+    const int *t1 = (const int *)a;
+    const int *t2 = (const int *)b;
+    
+    // Urutkan berdasarkan baris (indeks 0) terlebih dahulu
+    if (t1[0] != t2[0]) {
+        return t1[0] - t2[0];
+    }
+    // Jika baris sama, urutkan berdasarkan kolom (indeks 1)
+    return t1[1] - t2[1];
+}
+
+
+void add_element(int result[][3], int *count, int r, int c, int v) {
+    if (v == 0) return;
+    
+    // Pindai apakah koordinat (r, c) sudah ada di dalam array hasil
+    for (int i = 0; i < *count; i++) {
+        if (result[i][0] == r && result[i][1] == c) {
+            result[i][2] += v; 
+            return;
+        }
+    }
+    
+    result[*count][0] = r;
+    result[*count][1] = c;
+    result[*count][2] = v;
+    (*count)++;
+}
+
+int main() {
+    int mode;
+    if (scanf("%d", &mode) != 1) return 0;
+
+    int a_rows, a_cols, a_terms;
+    int A[40][3]; 
+    
+    scanf("%d %d %d", &a_rows, &a_cols, &a_terms);
+    for (int i = 0; i < a_terms; i++) {
+        scanf("%d %d %d", &A[i][0], &A[i][1], &A[i][2]);
+    }
+
+    int b_rows, b_cols, b_terms;
+    int B[40][3];
+    
+    scanf("%d %d %d", &b_rows, &b_cols, &b_terms);
+    for (int i = 0; i < b_terms; i++) {
+        scanf("%d %d %d", &B[i][0], &B[i][1], &B[i][2]);
+    }
+
+    int temp_result[100][3];
+    int res_count = 0;
+
+    if (mode == 1) {
+        for (int i = 0; i < a_terms; i++) {
+            add_element(temp_result, &res_count, A[i][0], A[i][1], A[i][2]);
+        }
+        for (int i = 0; i < b_terms; i++) {
+            add_element(temp_result, &res_count, B[i][0], B[i][1], B[i][2]);
+        }
+    } else if (mode == 2) {
+        for (int i = 0; i < a_terms; i++) {
+            for (int j = 0; j < b_terms; j++) {
+                if (A[i][1] == B[j][0]) {
+                    int multiplied_val = A[i][2] * B[j][2];
+                    add_element(temp_result, &res_count, A[i][0], B[j][1], multiplied_val);
+                }
+            }
+        }
+    }
+
+    int final_result[100][3];
+    int final_count = 0;
+    
+    for (int i = 0; i < res_count; i++) {
+        if (temp_result[i][2] != 0) {
+            final_result[final_count][0] = temp_result[i][0];
+            final_result[final_count][1] = temp_result[i][1];
+            final_result[final_count][2] = temp_result[i][2];
+            final_count++;
+        }
+    }
+
+    if (final_count == 0) {
+        printf("6 6 0\n");
+    } else {
+        // Mengurutkan array 2D sebelum dicetak menggunakan qsort
+        qsort(final_result, final_count, sizeof(final_result[0]), compare);
+        
+        printf("6 6 %d\n", final_count);
+        for (int i = 0; i < final_count; i++) {
+            printf("%d %d %d\n", final_result[i][0], final_result[i][1], final_result[i][2]);
+        }
+    }
+
+    return 0;
+}
