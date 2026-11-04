@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+void hanoi(int x, int a, int aux, int b) {
+    if (x == 1) {
+        printf("Move disk 1 from peg %d to peg %d\n", a, b);
+        return;
+    }
+    
+    // Langkah 1: Pindahkan tumpukan di atasnya (x-1) ke tiang bantuan (aux)
+    hanoi(x - 1, a, b, aux);
+    
+    // Langkah 2: Pindahkan piringan terbesar saat ini (x) ke tiang tujuan (b)
+    printf("Move disk %d from peg %d to peg %d\n", x, a, b);
+    
+    // Langkah 3: Pindahkan kembali tumpukan dari tiang bantuan (aux) ke tiang tujuan (b)
+    hanoi(x - 1, aux, a, b);
+}
+
+int main() {
+    int n;
+    if (scanf("%d", &n) == 1) {
+        hanoi(n, 1, 2, 3);
+    }
+    return 0;
+}
